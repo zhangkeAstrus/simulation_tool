@@ -8,33 +8,66 @@ uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
 if uploaded_file is not None:
     try:
-        # Step 1: Get list of sheets
         xls = pd.ExcelFile(uploaded_file)
-        sheet_names = xls.sheet_names
-
-        # Step 2: Let user select a sheet
-        sheet_name = st.selectbox("Select a sheet to load:", sheet_names)
+        sheet_name = st.selectbox("Select a sheet to load:", xls.sheet_names)
 
         if sheet_name:
-            # Step 3: Read selected sheet
+            # Preserve the workbook structure used by the existing tool.
             df_raw = pd.read_excel(xls, sheet_name=sheet_name, header=2)
+            columns = df_raw.columns.tolist()
 
-            # Extract and store data in session state
-            loss_col_name = df_raw.columns[0]
-            loss_data = df_raw[[loss_col_name]].dropna()
+            st.subheader("Select Input Columns")
 
-            exposure_data = df_raw.iloc[:, 2:5].dropna(how='all')
+            loss_col = st.selectbox(
+                "Loss Amount Column",
+                columns,
+                index=0,
+            )
+            year_col = st.selectbox(
+                "Year Column",
+                columns,
+                index=min(2, len(columns) - 1),
+            )
+            tiv_col = st.selectbox(
+                "Projected TIV Column",
+                columns,
+                index=min(3, len(columns) - 1),
+            )
+            count_col = st.selectbox(
+                "Projected Claim Count Column",
+                columns,
+                index=min(4, len(columns) - 1),
+            )
 
-            # Save to session state
-            st.session_state["loss_data"] = loss_data
-            st.session_state["exposure_data"] = exposure_data
+            if st.button("Load Selected Data", type="primary"):
+                loss_data = df_raw[[loss_col]].rename(columns={loss_col: "Loss"}).copy()
+                loss_data["Loss"] = pd.to_numeric(loss_data["Loss"], errors="coerce")
+                loss_data = loss_data.dropna(subset=["Loss"])
 
-            st.success(f"Data loaded from sheet: {sheet_name}")
-            st.subheader(f"Loss Data ({loss_col_name})")
-            st.dataframe(loss_data)
+                exposure_data = df_raw[[year_col, tiv_col, count_col]].copy()
+                exposure_data.columns = [
+                    "Year",
+                    "Projected TIV",
+                    "Projected Claim Count",
+                ]
 
-            st.subheader("Exposure Data (Columns C to E)")
-            st.dataframe(exposure_data)
+                for col in exposure_data.columns:
+                    exposure_data[col] = pd.to_numeric(exposure_data[col], errors="coerce")
+
+                exposure_data = exposure_data.dropna(how="all")
+
+                st.session_state["loss_data"] = loss_data
+                st.session_state["exposure_data"] = exposure_data
+
+                st.success(f"Data loaded from sheet: {sheet_name}")
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.subheader("Loss Data")
+                    st.dataframe(loss_data, use_container_width=True)
+                with col2:
+                    st.subheader("Exposure Data")
+                    st.dataframe(exposure_data, use_container_width=True)
 
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")
