@@ -21,7 +21,7 @@ with col1:
         "Number of Deductible Options",
         min_value=1,
         max_value=10,
-        value=st.session_state.get("num_deductibles", 3),
+        value=st.session_state.get("num_deductibles", 1),
         step=1,
         help="Set how many different deductible scenarios to analyze"
     )
@@ -33,7 +33,7 @@ with col2:
         "Number of Limit Options",
         min_value=1,
         max_value=10,
-        value=st.session_state.get("num_limits", 3),
+        value=st.session_state.get("num_limits", 1),
         step=1,
         help="Set how many different limit scenarios to analyze"
     )
@@ -202,10 +202,19 @@ if "policy_results" in st.session_state:
     
     # Select combination to view
     combo_options = []
+    combo_lookup = {}
+
     for combo_key, combo_data in policy_data.items():
         ded_val = combo_data['deductible']
         lim_val = combo_data['limit']
-        combo_options.append(f"{combo_key}: ${ded_val:,} ded / ${lim_val:,} limit")
+
+        display_label = (
+            f"${ded_val:,.0f} Deductible / "
+            f"${lim_val:,.0f} Limit"
+        )
+
+        combo_options.append(display_label)
+        combo_lookup[display_label] = combo_key
     
     selected_combo = st.selectbox(
         "Select Deductible/Limit Combination to View",
@@ -214,11 +223,13 @@ if "policy_results" in st.session_state:
     )
     
     if selected_combo:
-        combo_key = selected_combo.split(":")[0]
+        combo_key = combo_lookup[selected_combo]
         combo_data = policy_data[combo_key]
-        
-        st.write(f"**Analysis for {selected_combo}**")
-        
+
+        display_combo = selected_combo.replace("$", r"\$")
+
+        st.subheader(f"Analysis for {display_combo}")
+
         # Export Options
         st.subheader("Export Policy Analysis Data")
         

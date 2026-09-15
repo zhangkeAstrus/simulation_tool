@@ -28,8 +28,8 @@ st.subheader("Exposure Data Overview")
 st.dataframe(exposure_data)
 
 # Extract the relevant columns
-years = exposure_data["Year"].values
-projected_tiv = exposure_data["Projected TIV"].values  
+years = exposure_data["Year"].astype(int).values
+projected_exposure = exposure_data["Projected exposure"].values  
 original_counts = exposure_data["Projected Claim Count"].values
 
 
@@ -88,10 +88,10 @@ fig.add_trace(
     secondary_y=False,
 )
 
-# Add projected TIV (bar chart)
+# Add projected exposure (bar chart)
 fig.add_trace(
-    go.Bar(x=years, y=projected_tiv,
-           name='Projected TIV', 
+    go.Bar(x=years, y=projected_exposure,
+           name='Projected Exposure', 
            marker=dict(color='lightcoral', opacity=0.6),
            width=0.4),
     secondary_y=True,
@@ -102,10 +102,10 @@ fig.update_xaxes(title_text="Year", dtick=1)
 
 # Set y-axes titles
 fig.update_yaxes(title_text="Expected Claims", secondary_y=False)
-fig.update_yaxes(title_text="Projected TIV ($)", secondary_y=True)
+fig.update_yaxes(title_text="Projected Exposure ($)", secondary_y=True)
 
 fig.update_layout(
-    title="Expected Claim Counts and Projected TIV by Year",
+    title="Expected Claim Counts and Projected Exposure by Year",
     height=400,
     legend=dict(
         orientation="h",
@@ -153,7 +153,7 @@ if st.button("🎲 Run Poisson Simulations", type="primary"):
             lambda_param = projected_counts[i]
             # Generate Poisson random variables
             simulated_counts = np.random.poisson(lambda_param, num_simulations)
-            simulation_results[year] = simulated_counts
+            simulation_results[int(year)] = simulated_counts
             total_simulations += simulated_counts
         
         # Store simulation results in session state
@@ -168,6 +168,21 @@ if st.button("🎲 Run Poisson Simulations", type="primary"):
         }
         
         st.success("✅ Simulations completed for all years!")
+
+if "claim_count_simulations" in st.session_state:
+    stored_years = [
+        int(y)
+        for y in st.session_state["claim_count_simulations"]["years"]
+    ]
+
+    current_years = [int(y) for y in years]
+
+    if stored_years != current_years:
+        del st.session_state["claim_count_simulations"]
+        st.info(
+            "Input years changed. Previous claim count simulations "
+            "were cleared. Please run the simulation again."
+        )
 
 # Display results if simulations exist
 if "claim_count_simulations" in st.session_state:
@@ -203,7 +218,7 @@ if "claim_count_simulations" in st.session_state:
     
     # Add each year as a column
     for year in years:
-        year_results = sim_data['yearly_simulations'][year]
+        year_results = sim_data['yearly_simulations'][int(year)]
         
         stats_data[f"Year {int(year)}"] = [
             f"{np.mean(year_results):.1f}",

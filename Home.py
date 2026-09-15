@@ -28,8 +28,8 @@ if uploaded_file is not None:
                 columns,
                 index=min(2, len(columns) - 1),
             )
-            tiv_col = st.selectbox(
-                "Projected TIV Column",
+            exposure_col = st.selectbox(
+                "Projected Exposure Column",
                 columns,
                 index=min(3, len(columns) - 1),
             )
@@ -44,10 +44,10 @@ if uploaded_file is not None:
                 loss_data["Loss"] = pd.to_numeric(loss_data["Loss"], errors="coerce")
                 loss_data = loss_data.dropna(subset=["Loss"])
 
-                exposure_data = df_raw[[year_col, tiv_col, count_col]].copy()
+                exposure_data = df_raw[[year_col, exposure_col, count_col]].copy()
                 exposure_data.columns = [
                     "Year",
-                    "Projected TIV",
+                    "Projected exposure",
                     "Projected Claim Count",
                 ]
 
