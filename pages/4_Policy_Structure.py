@@ -275,7 +275,7 @@ if "policy_results" in st.session_state:
                     # Show preview
                     st.write("**Preview of Single Combination Export:**")
                     preview_df = export_df.head(10)
-                    st.dataframe(preview_df, use_container_width=True)
+                    st.dataframe(preview_df, width="stretch")
                     
                     st.info(f"📊 Export contains {len(export_data):,} rows for selected combination")
             
@@ -318,7 +318,7 @@ if "policy_results" in st.session_state:
                     # Show preview
                     st.write("**Preview of All Combinations Export:**")
                     preview_df = all_export_df.head(10)
-                    st.dataframe(preview_df, use_container_width=True)
+                    st.dataframe(preview_df, width="stretch")
                     
                     st.info(f"📊 Export contains {len(all_export_data):,} rows for all {len(policy_data)} combinations")
         
@@ -396,6 +396,6 @@ if "policy_results" in st.session_state:
                         # Show preview of the data structure
                         st.write("**Preview of Claim Level Policy Export:**")
                         preview_df = export_df.head(5)  # Show first 5 rows (less due to many columns)
-                        st.dataframe(preview_df, use_container_width=True)
+                        st.dataframe(preview_df, width="stretch")
                         
                         st.info(f"📊 Export contains {len(export_data):,} rows with up to {max_claims} claims per simulation, each with 5 policy components")

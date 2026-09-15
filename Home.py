@@ -64,10 +64,10 @@ if uploaded_file is not None:
                 col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("Loss Data")
-                    st.dataframe(loss_data, use_container_width=True)
+                    st.dataframe(loss_data, width="stretch")
                 with col2:
                     st.subheader("Exposure Data")
-                    st.dataframe(exposure_data, use_container_width=True)
+                    st.dataframe(exposure_data, width="stretch")
 
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")

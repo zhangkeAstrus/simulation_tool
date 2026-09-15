@@ -199,7 +199,7 @@ if "complete_claims_simulation" in st.session_state:
             f"{np.mean(total_losses == 0):.1%}",
         ]
 
-    st.dataframe(pd.DataFrame(stats_data), use_container_width=True)
+    st.dataframe(pd.DataFrame(stats_data), width="stretch")
 
     # Actuarial reconciliation: theoretical compound mean vs Monte Carlo mean.
     st.subheader("Actuarial Reconciliation")
@@ -262,7 +262,7 @@ if "complete_claims_simulation" in st.session_state:
     format_map = {k: v for k, v in format_map.items() if k in reconciliation_df.columns}
     st.dataframe(
         reconciliation_df.style.format(format_map),
-        use_container_width=True,
+        width="stretch",
     )
     st.caption(
         "The simulated means should converge toward Expected Claims × Expected Severity. "
@@ -302,7 +302,7 @@ if "complete_claims_simulation" in st.session_state:
             x=1,
         ),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     if st.checkbox("Show Log Scale", help="Useful for highly skewed loss distributions"):
         fig_log = go.Figure()
@@ -327,7 +327,7 @@ if "complete_claims_simulation" in st.session_state:
             height=500,
             barmode="overlay",
         )
-        st.plotly_chart(fig_log, use_container_width=True)
+        st.plotly_chart(fig_log, width="stretch")
 
     st.subheader("Export Simulation Data")
     col1, col2 = st.columns(2)

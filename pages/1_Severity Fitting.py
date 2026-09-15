@@ -67,7 +67,7 @@ results_df["BIC"] = results_df["BIC"].apply(
 )
 results_df = results_df.sort_values("KS Statistic", na_position="last")
 
-st.dataframe(results_df, use_container_width=True)
+st.dataframe(results_df, width="stretch")
 
 successful_fits = results_df[results_df["Parameters"].apply(lambda x: isinstance(x, tuple))]
 
@@ -129,7 +129,7 @@ for name, dist in distributions.items():
     except Exception as e:
         st.warning(f"Failed to compute fitted stats for {name}: {e}")
 
-st.dataframe(summary_table, use_container_width=True)
+st.dataframe(summary_table, width="stretch")
 
 # Probability plot
 st.subheader("Probability Distribution of Actual Loss Data with Fitted Distributions")
@@ -190,7 +190,7 @@ try:
         height=500,
         yaxis=dict(tickformat=".3f", range=[0, 1]),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:

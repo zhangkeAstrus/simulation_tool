@@ -116,7 +116,7 @@ fig.update_layout(
     )
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # Simulation Options
 st.subheader("Poisson Simulation Parameters")
@@ -231,7 +231,7 @@ if "claim_count_simulations" in st.session_state:
         ]
     
     stats_df = pd.DataFrame(stats_data)
-    st.dataframe(stats_df, use_container_width=True)
+    st.dataframe(stats_df, width="stretch")
     
     # Distribution of Claims - All Years in Single Plot
     st.subheader("Distribution of Simulated Claims by Year")
@@ -268,4 +268,4 @@ if "claim_count_simulations" in st.session_state:
         )
     )
     
-    st.plotly_chart(fig_hist, use_container_width=True)
+    st.plotly_chart(fig_hist, width="stretch")
