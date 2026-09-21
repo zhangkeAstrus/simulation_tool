@@ -91,7 +91,7 @@ for i in range(num_limits):
         limit = st.number_input(
             f"Limit {i+1}",
             min_value=0,
-            max_value=100000000,
+            max_value=10000000000,
             value=st.session_state["limits"][i],
             step=100000,
             help=f"Enter limit amount #{i+1}",
