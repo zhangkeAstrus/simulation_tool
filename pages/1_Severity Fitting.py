@@ -27,6 +27,7 @@ distributions = {
     "Gamma": stats.gamma,
     "Exponential": stats.expon,
     "Inverse Gaussian": stats.invgauss,
+    "Log-Logistic": stats.fisk
 }
 
 # Fit and evaluate each distribution
@@ -266,6 +267,26 @@ elif selected_dist_name == "Exponential":
     )
     manual_params = (0.0, scale_param)
 
+elif selected_dist_name == "Log-Logistic":
+    shape_param = st.number_input(
+        "Shape (c)",
+        value=float(fitted_params[0]),
+        format="%.6f"
+    )
+
+    st.write("Location: 0.000000 (fixed for loss modeling)")
+
+    scale_param = st.number_input(
+        "Scale",
+        value=float(fitted_params[2]),
+        format="%.6f"
+    )
+
+    manual_params = (
+        shape_param,
+        0.0,
+        scale_param
+    )
 else:  # Inverse Gaussian
     shape_param = st.number_input(
         "Shape (μ)", value=float(fitted_params[0]), format="%.6f"
@@ -275,6 +296,8 @@ else:  # Inverse Gaussian
         "Scale", value=float(fitted_params[2]), format="%.6f"
     )
     manual_params = (shape_param, 0.0, scale_param)
+
+    
 
 # Optional limited-severity calibration
 st.divider()
@@ -342,7 +365,21 @@ if use_limited_calibration:
     except Exception as e:
         st.error(f"Limited severity calibration failed: {e}")
         final_params = manual_params
+        
+# Warn about Log-Logistic tail properties
+if selected_dist_name == "Log-Logistic":
+    c = final_params[0]
 
+    if c <= 1:
+        st.warning(
+            "The fitted Log-Logistic has shape <= 1, "
+            "so the theoretical mean is infinite."
+        )
+    elif c <= 2:
+        st.warning(
+            "The fitted Log-Logistic has finite mean "
+            "but infinite variance."
+        )
 # Statistics for the parameters that will actually be finalized
 try:
     st.write("**Theoretical Statistics with Final Parameters:**")
