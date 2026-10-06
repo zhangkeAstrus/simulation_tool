@@ -61,7 +61,7 @@ for i in range(num_deductibles):
         deductible = st.number_input(
             f"Deductible {i+1}",
             min_value=0,
-            max_value=10000000,
+            max_value=100000000,
             value=st.session_state["deductibles"][i],
             step=1000,
             help=f"Enter deductible amount #{i+1}",

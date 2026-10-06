@@ -365,7 +365,7 @@ if use_limited_calibration:
     except Exception as e:
         st.error(f"Limited severity calibration failed: {e}")
         final_params = manual_params
-        
+
 # Warn about Log-Logistic tail properties
 if selected_dist_name == "Log-Logistic":
     c = final_params[0]
@@ -377,8 +377,8 @@ if selected_dist_name == "Log-Logistic":
         )
     elif c <= 2:
         st.warning(
-            "The fitted Log-Logistic has finite mean "
-            "but infinite variance."
+            "The fitted Log-Logistic has shape >1 but <=2,"
+            "so the theoretical mean is finite but the variance is infinite."
         )
 # Statistics for the parameters that will actually be finalized
 try:
